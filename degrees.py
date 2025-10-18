@@ -55,7 +55,7 @@ def load_data(directory):
 def main():
     if len(sys.argv) > 2:
         sys.exit("Usage: python degrees.py [directory]")
-    directory = sys.argv[1] if len(sys.argv) == 2 else "large"
+    directory = sys.argv[1] if len(sys.argv) == 2 else "small"
 
     # Load data from files into memory
     print("Loading data...")
@@ -91,9 +91,49 @@ def shortest_path(source, target):
 
     If no possible path, returns None.
     """
+    # Keep track of number of states explored
+    num_explored = 0
 
-    # TODO
-    raise NotImplementedError
+    # Initialize frontier to just the starting position
+    start = Node(frozenset(state=neighbors_for_person(source)), parent=None, action=None)
+    frontier = QueueFrontier()
+    QueueFrontier.add(frontier, start)
+
+    # Initialize an empty explored set
+    explored = set()
+
+    # Keep looping until solution found
+    while True:
+
+        # If nothing left in frontier, then no path
+        if frontier.empty():
+            raise Exception("no solution")
+
+        # Choose a node from the frontier
+        node = frontier.remove()
+        num_explored += 1
+
+        # If node is the goal, then we have a solution
+        if node.state == target :
+            actions = []
+            cells = []
+            while node.parent is not None:
+                actions.append(node.action)
+                cells.append(node.state)
+                node = node.parent
+            actions.reverse()
+            cells.reverse()
+            solution = (actions, cells)
+            return
+
+        # Mark node as explored
+        explored.add(node.state)
+
+        # Add neighbors to frontier
+        for action, state in neighbors_for_person(node.state):
+            if not frontier.contains_state(state) and state not in explored:
+                child = Node(state=state, parent=node, action=action)
+                frontier.add(child)
 
 
 def person_id_for_name(name):

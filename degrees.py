@@ -55,7 +55,7 @@ def load_data(directory):
 def main():
     if len(sys.argv) > 2:
         sys.exit("Usage: python degrees.py [directory]")
-    directory = sys.argv[1] if len(sys.argv) == 2 else "small"
+    directory = sys.argv[1] if len(sys.argv) == 2 else "large"
 
     # Load data from files into memory
     print("Loading data...")
@@ -91,9 +91,7 @@ def shortest_path(source, target):
 
     If no possible path, returns None.
     """
-    # Keep track of number of states explored
-    num_explored = 0
-
+    
     # Initialize frontier to just the starting position
     start = Node(state=source, parent=None, action=None)
     frontier = QueueFrontier()
@@ -111,22 +109,16 @@ def shortest_path(source, target):
         # Choose a node from the frontier
         node = frontier.remove()
         num_explored += 1
-        print("+1")
 
         # If node is the goal, then we have a solution
         if node.state == target :
-            actions = []
-            cells = []
+            path = []
             while node.parent is not None:
-                actions.append(node.action)
-                cells.append(node.state)
+                path.append([node.action, node.state])
                 node = node.parent
-            actions.reverse()
-            cells.reverse()
-            print(actions)
-            print(cells)
-            solution = (actions, cells)
-            return
+            path.reverse()
+            solution = path
+            return solution
 
         # Mark node as explored
         explored.add(node)
